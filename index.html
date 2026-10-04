@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WatchJobs — Bientôt</title>
+<meta name="description" content="Les offres d’emploi de l’horlogerie, réunies au même endroit.">
+<meta name="theme-color" content="#0E0E0F">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500&family=IBM+Plex+Mono:wght@400&display=swap">
+<style>
+  :root {
+    --bg: #0E0E0F;
+    --fg: #ECE8E1;
+    --muted: #9A958D;
+    --line: #2A2A2D;
+    --sans: 'Inter Tight', 'Inter', system-ui, sans-serif;
+    --mono: 'IBM Plex Mono', ui-monospace, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); }
+  body {
+    font-family: var(--sans);
+    color: var(--fg);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  a { color: var(--muted); }
+  a:hover { color: var(--fg); }
+  input, button { font: inherit; }
+
+  .wrap { width: 100%; max-width: 1200px; margin: 0 auto; padding-left: 16px; padding-right: 16px; }
+
+  header {
+    padding-top: 32px; padding-bottom: 32px;
+    display: flex; justify-content: space-between; align-items: center; gap: 16px;
+  }
+  .logo { font-size: 20px; font-weight: 500; letter-spacing: -0.02em; }
+  .mono { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+
+  main {
+    flex: 1 1 auto;
+    padding-top: 64px; padding-bottom: 64px;
+    display: flex; flex-direction: column; justify-content: center; gap: 32px;
+  }
+  h1 {
+    margin: 0;
+    font-size: clamp(48px, 9vw, 128px);
+    line-height: 0.92; font-weight: 300; letter-spacing: -0.04em;
+    max-width: 1000px;
+  }
+  .lede {
+    margin: 0; max-width: 520px;
+    font-size: 20px; line-height: 30px; font-weight: 300; color: var(--muted);
+  }
+
+  form {
+    display: flex; flex-wrap: wrap; align-items: flex-end; gap: 16px;
+    max-width: 520px; margin-top: 16px;
+    border-bottom: 1px solid var(--fg); padding-bottom: 12px;
+  }
+  form label { flex: 1 1 260px; display: flex; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  input[type=email] {
+    flex: 1 1 auto; background: transparent; border: 0; outline: none;
+    color: var(--fg); font-size: 18px; line-height: 28px; padding: 8px 0; min-height: 44px;
+  }
+  input[type=email]::placeholder { color: var(--muted); }
+  button {
+    border: 0; border-radius: 2px; background: var(--fg); color: var(--bg);
+    font-size: 15px; font-weight: 500; padding: 12px 20px; min-height: 44px; cursor: pointer;
+  }
+  button:disabled { opacity: 0.5; cursor: default; }
+  button:focus-visible, input:focus-visible { outline: 1px solid var(--fg); outline-offset: 4px; }
+  .done {
+    margin: 16px 0 0; max-width: 520px;
+    font-size: 18px; line-height: 28px;
+    padding-bottom: 12px; border-bottom: 1px solid var(--line);
+  }
+  [hidden] { display: none !important; }
+
+  footer {
+    padding-top: 32px; padding-bottom: 32px;
+    display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px;
+    border-top: 1px solid var(--line);
+  }
+</style>
+</head>
+<body>
+
+<header class="wrap">
+  <span class="logo">watchjobs</span>
+  <span class="mono">2027</span>
+</header>
+
+<main class="wrap">
+  <h1>bientôt.</h1>
+  <p class="lede">Les offres d’emploi de l’horlogerie, réunies au même endroit. On termine les derniers réglages.</p>
+
+  <form id="notify" action="https://formspree.io/f/myekgozzn" method="POST">
+    <label>
+      <span class="sr-only">Ton email</span>
+      <input type="email" name="email" required placeholder="ton email" autocomplete="email">
+    </label>
+    <button type="submit">Être prévenu</button>
+  </form>
+  <p class="done" id="done" hidden>C’est noté. Tu seras parmi les premiers.</p>
+  <p class="lede" id="error" role="alert" hidden>Ça n’a pas marché. Réessaie dans un instant.</p>
+</main>
+
+<footer class="wrap mono">
+  <span>cdi · cdd · stage · alternance · freelance — france &amp; europe</span>
+</footer>
+
+<script>
+  var form = document.getElementById('notify');
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var btn = form.querySelector('button');
+    btn.disabled = true;
+    document.getElementById('error').hidden = true;
+    fetch(form.action, {
+      method: 'POST',
+      body: new FormData(form),
+      headers: { 'Accept': 'application/json' }
+    }).then(function (res) {
+      if (!res.ok) throw new Error(res.status);
+      form.hidden = true;
+      document.getElementById('done').hidden = false;
+    }).catch(function () {
+      document.getElementById('error').hidden = false;
+      btn.disabled = false;
+    });
+  });
+</script>
+</body>
+</html>
